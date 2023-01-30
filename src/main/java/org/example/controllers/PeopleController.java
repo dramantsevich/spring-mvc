@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/people")
 public class PeopleController {
-    private PersonDAO personDAO;
+    private final PersonDAO personDAO;
+    private static final String REDIRECT_PEOPLE = "redirect:/people";
 
     @Autowired
     public PeopleController(PersonDAO personDAO) {
@@ -19,14 +20,14 @@ public class PeopleController {
 
     @GetMapping()
     public String getPeopleList(Model model) {
-        model.addAttribute("peopleList", personDAO.getPersonList());
+        model.addAttribute("people", personDAO.getPersonList());
 
         return "people/peopleList";
     }
 
     @GetMapping("/{id}")
     public String getPeople(@PathVariable("id") int id, Model model) {
-        model.addAttribute("people", personDAO.getPersonById(id));
+        model.addAttribute("person", personDAO.getPersonById(id));
 
         return "people/people";
     }
@@ -40,6 +41,27 @@ public class PeopleController {
     public String create(@ModelAttribute("person") Person person) {
         personDAO.save(person);
 
-        return "redirect:/people";
+        return REDIRECT_PEOPLE;
+    }
+
+    @GetMapping("/{id}/edit")
+    public String edit(Model model, @PathVariable("id") int id) {
+        model.addAttribute("person", personDAO.getPersonById(id));
+
+        return "people/edit";
+    }
+
+    @PatchMapping("/{id}")
+    public String update(@ModelAttribute("person") Person person, @PathVariable("id") int id) {
+        personDAO.update(id, person);
+
+        return REDIRECT_PEOPLE;
+    }
+
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable("id") int id) {
+        personDAO.delete(id);
+
+        return REDIRECT_PEOPLE;
     }
 }
