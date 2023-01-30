@@ -22,4 +22,34 @@ public class FirstController {
     public String goodbyePage() {
         return "/first/goodbye";
     }
+
+    @GetMapping("/calculator")
+    public String calculatorPage(@RequestParam(value = "first_value") int first_value,
+                                 @RequestParam(value = "second_value") int second_value,
+                                 @RequestParam(value = "action") String action,
+                                 Model model) {
+        double result;
+
+        switch(action) {
+            case "multiplication":
+                result = first_value * second_value;
+                break;
+            case "addition":
+                result = first_value + second_value;
+                break;
+            case "subtraction":
+                result = first_value - second_value;
+                break;
+            case "division":
+                result = first_value / (double) second_value;
+                break;
+            default:
+                result = 0;
+                break;
+        }
+
+        model.addAttribute("result", result);
+
+        return "/first/calculator";
+    }
 }
