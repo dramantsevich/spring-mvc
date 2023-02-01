@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class PersonDAO {
@@ -31,6 +32,13 @@ public class PersonDAO {
                 .stream()
                 .findAny()
                 .orElse(null);
+    }
+
+    public Optional<Person> getPersonByEmail(String email) {
+        return jdbcTemplate.query("SELECT * FROM Person WHERE email=?", new Object[]{email},
+                new BeanPropertyRowMapper<>(Person.class))
+                .stream()
+                .findAny();
     }
 
     public void save(Person person) {
